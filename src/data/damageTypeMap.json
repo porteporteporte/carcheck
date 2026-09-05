@@ -1,0 +1,153 @@
+{
+  "Front End": {
+    "ua_label": "Перед",
+    "expected_photo_types": ["exterior_front", "exterior_front_3q_left", "exterior_front_3q_right", "engine_bay", "interior_dash"],
+    "key_parts": [
+      "front_bumper", "hood", "grille",
+      "headlight_left", "headlight_right",
+      "fender_left", "fender_right",
+      "windshield",
+      "radiator", "engine",
+      "frame_rail_front_left", "frame_rail_front_right",
+      "strut_tower_left", "strut_tower_right",
+      "airbag_steering", "airbag_passenger",
+      "airbag_knee_driver", "airbag_knee_passenger"
+    ],
+    "ignore_zones": ["rear"],
+    "body_intact": false
+  },
+  "Rear End": {
+    "ua_label": "Зад",
+    "expected_photo_types": ["exterior_rear", "exterior_rear_3q_left", "exterior_rear_3q_right", "trunk_open"],
+    "key_parts": [
+      "rear_bumper", "trunk_lid",
+      "tail_light_left", "tail_light_right",
+      "rear_window", "rear_panel", "trunk_floor",
+      "rear_quarter_left", "rear_quarter_right",
+      "frame_rail_rear_left", "frame_rail_rear_right"
+    ],
+    "ignore_zones": ["front", "engine_bay"],
+    "body_intact": false
+  },
+  "Side": {
+    "ua_label": "Бік",
+    "expected_photo_types": ["exterior_side_left", "exterior_side_right", "exterior_front_3q_left", "exterior_front_3q_right", "exterior_rear_3q_left", "exterior_rear_3q_right", "interior_seats_front"],
+    "key_parts": [
+      "front_door_left", "front_door_right",
+      "rear_door_left", "rear_door_right",
+      "fender_left", "fender_right",
+      "rear_quarter_left", "rear_quarter_right",
+      "rocker_left", "rocker_right",
+      "side_mirror_left", "side_mirror_right",
+      "airbag_curtain_left", "airbag_curtain_right",
+      "airbag_seat_left", "airbag_seat_right"
+    ],
+    "ignore_zones": [],
+    "body_intact": false
+  },
+  "Top/Roof": {
+    "ua_label": "Дах",
+    "expected_photo_types": ["exterior_front_3q_left", "exterior_front_3q_right", "exterior_rear_3q_left", "exterior_rear_3q_right"],
+    "key_parts": ["roof", "windshield", "rear_window"],
+    "ignore_zones": [],
+    "body_intact": false
+  },
+  "All Over": {
+    "ua_label": "По всій машині",
+    "expected_photo_types": ["exterior_front", "exterior_rear", "exterior_side_left", "exterior_side_right"],
+    "key_parts": [
+      "front_bumper", "hood", "headlight_left", "headlight_right",
+      "fender_left", "fender_right",
+      "front_door_left", "front_door_right",
+      "rear_door_left", "rear_door_right",
+      "rear_bumper", "trunk_lid", "tail_light_left", "tail_light_right",
+      "roof", "windshield"
+    ],
+    "ignore_zones": [],
+    "body_intact": false
+  },
+  "Roll Over": {
+    "ua_label": "Перевертання",
+    "expected_photo_types": ["exterior_front_3q_left", "exterior_front_3q_right", "exterior_rear_3q_left", "exterior_rear_3q_right", "interior_dash", "interior_seats_front"],
+    "key_parts": [
+      "roof", "windshield", "rear_window",
+      "hood", "trunk_lid",
+      "fender_left", "fender_right", "rear_quarter_left", "rear_quarter_right",
+      "airbag_steering", "airbag_passenger",
+      "airbag_curtain_left", "airbag_curtain_right",
+      "airbag_seat_left", "airbag_seat_right",
+      "airbag_knee_driver", "airbag_knee_passenger"
+    ],
+    "ignore_zones": [],
+    "body_intact": false
+  },
+  "Engine damage": {
+    "ua_label": "Пошкодження двигуна (механічне)",
+    "expected_photo_types": ["engine_bay"],
+    "key_parts": ["engine", "radiator", "battery"],
+    "ignore_zones": ["front", "side", "rear", "interior_safety"],
+    "body_intact": true,
+    "do_not_check": ["airbag_steering", "airbag_passenger", "airbag_curtain_left", "airbag_curtain_right", "frame_rail_front_left", "frame_rail_front_right"]
+  },
+  "Mechanical": {
+    "ua_label": "Механічна несправність",
+    "expected_photo_types": ["engine_bay"],
+    "key_parts": ["engine", "radiator"],
+    "ignore_zones": ["front", "side", "rear", "interior_safety"],
+    "body_intact": true,
+    "do_not_check": ["airbag_steering", "airbag_passenger", "airbag_curtain_left", "airbag_curtain_right", "frame_rail_front_left", "frame_rail_front_right"]
+  },
+  "Normal Wear": {
+    "ua_label": "Звичайний знос",
+    "expected_photo_types": ["exterior_front", "exterior_rear", "exterior_side_left", "exterior_side_right", "interior_seats_front"],
+    "key_parts": ["front_bumper", "hood", "rear_bumper", "fender_left", "fender_right", "seat_driver"],
+    "ignore_zones": [],
+    "body_intact": true
+  },
+  "Minor Dent/Scratches": {
+    "ua_label": "Дрібні вм'ятини/подряпини",
+    "expected_photo_types": ["exterior_front", "exterior_rear", "exterior_side_left", "exterior_side_right"],
+    "key_parts": ["front_bumper", "hood", "rear_bumper", "fender_left", "fender_right", "front_door_left", "front_door_right"],
+    "ignore_zones": [],
+    "body_intact": true
+  },
+  "Hail": {
+    "ua_label": "Град",
+    "expected_photo_types": ["exterior_front_3q_left", "exterior_front_3q_right", "exterior_rear_3q_left", "exterior_rear_3q_right"],
+    "key_parts": ["hood", "roof", "trunk_lid"],
+    "look_for": "точкові вм'ятини як від градин на горизонтальних поверхнях (капот, дах, кришка багажника)",
+    "ignore_zones": ["interior", "interior_safety"],
+    "body_intact": true
+  },
+  "Vandalism": {
+    "ua_label": "Вандалізм",
+    "expected_photo_types": ["exterior_front", "exterior_rear", "exterior_side_left", "exterior_side_right", "interior_dash"],
+    "key_parts": ["windshield", "rear_window", "front_door_left", "front_door_right", "hood", "trunk_lid"],
+    "look_for": "розбиті стекла, подряпини на ЛКП, зламані замки/ручки",
+    "ignore_zones": [],
+    "body_intact": false
+  },
+  "Water/Flood": {
+    "ua_label": "Вода / повінь",
+    "expected_photo_types": ["interior_seats_front", "interior_dash", "engine_bay", "interior_seats_rear"],
+    "key_parts": ["seat_driver", "seat_passenger", "engine", "dashboard", "steering_wheel", "interior_door_panel_left"],
+    "look_for": "вода, бруд, корозія, розводи, мокра обшивка, плями",
+    "ignore_zones": [],
+    "body_intact": true
+  },
+  "Burn": {
+    "ua_label": "Пожежа",
+    "expected_photo_types": ["engine_bay", "exterior_front", "interior_dash"],
+    "key_parts": ["engine", "hood", "dashboard", "front_bumper"],
+    "look_for": "сліди пожежі, обгорілий пластик, кіптява, сажа, оплавлене",
+    "ignore_zones": [],
+    "body_intact": false
+  },
+  "Undercarriage": {
+    "ua_label": "Днище",
+    "expected_photo_types": ["undercarriage"],
+    "key_parts": ["frame_rail_front_left", "frame_rail_front_right", "frame_rail_rear_left", "frame_rail_rear_right", "exhaust", "subframe_front", "subframe_rear"],
+    "ignore_zones": ["interior_safety"],
+    "body_intact": false
+  }
+}

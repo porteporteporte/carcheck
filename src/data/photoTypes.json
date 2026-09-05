@@ -1,0 +1,97 @@
+{
+  "exterior_front": {
+    "name": "Перед",
+    "description": "вид спереду, фари дивляться в камеру, видно весь фронт авто",
+    "parts_visible": ["front_bumper", "hood", "headlight_left", "headlight_right", "grille", "lower_grille", "windshield", "license_plate_front", "front_wheel_left", "front_wheel_right", "drl_left", "drl_right", "fog_light_front_left", "fog_light_front_right", "turn_signal_front_left", "turn_signal_front_right", "emblem_front", "crash_beam_front", "absorber_front", "core_support", "radiator", "frame_rail_front_left", "frame_rail_front_right"]
+  },
+  "exterior_front_3q_left": {
+    "name": "Перед 3/4 лівий",
+    "description": "ракурс під кутом ~45° з передньо-лівого боку (видно перед і ліву сторону)",
+    "parts_visible": ["front_bumper", "hood", "headlight_left", "fender_left", "windshield", "front_door_left", "front_wheel_left", "side_mirror_left", "roof", "drl_left", "fog_light_front_left", "turn_signal_front_left", "a_pillar_left", "crash_beam_front", "absorber_front", "frame_rail_front_left", "strut_tower_left"]
+  },
+  "exterior_front_3q_right": {
+    "name": "Перед 3/4 правий",
+    "description": "ракурс під кутом ~45° з передньо-правого боку (видно перед і праву сторону)",
+    "parts_visible": ["front_bumper", "hood", "headlight_right", "fender_right", "windshield", "front_door_right", "front_wheel_right", "side_mirror_right", "roof", "drl_right", "fog_light_front_right", "turn_signal_front_right", "a_pillar_right", "crash_beam_front", "absorber_front", "frame_rail_front_right", "strut_tower_right"]
+  },
+  "exterior_rear": {
+    "name": "Зад",
+    "description": "вид ззаду, ліхтарі дивляться в камеру, видно весь зад авто",
+    "parts_visible": ["rear_bumper", "rear_bumper_lower", "trunk_lid", "tail_light_left", "tail_light_right", "rear_window", "license_plate_rear", "third_brake_light", "reverse_light_left", "reverse_light_right", "turn_signal_rear_left", "turn_signal_rear_right", "rear_diffuser", "spoiler_rear", "emblem_rear", "exhaust_tip_left", "exhaust_tip_right", "crash_beam_rear", "frame_rail_rear_left", "frame_rail_rear_right", "rear_panel"]
+  },
+  "exterior_rear_3q_left": {
+    "name": "Зад 3/4 лівий",
+    "description": "ракурс під кутом ~45° з задньо-лівого боку",
+    "parts_visible": ["rear_bumper", "trunk_lid", "tail_light_left", "rear_door_left", "rear_quarter_left", "rear_wheel_left", "roof", "c_pillar_left", "side_glass_rear_left", "quarter_glass_left", "frame_rail_rear_left", "exhaust_tip_left"]
+  },
+  "exterior_rear_3q_right": {
+    "name": "Зад 3/4 правий",
+    "description": "ракурс під кутом ~45° з задньо-правого боку",
+    "parts_visible": ["rear_bumper", "trunk_lid", "tail_light_right", "rear_door_right", "rear_quarter_right", "rear_wheel_right", "roof", "c_pillar_right", "side_glass_rear_right", "quarter_glass_right", "frame_rail_rear_right", "exhaust_tip_right"]
+  },
+  "exterior_side_left": {
+    "name": "Лівий бік (водійський)",
+    "description": "профіль авто з лівої (водійської) сторони — видно водійські двері",
+    "parts_visible": ["front_door_left", "rear_door_left", "fender_left", "rear_quarter_left", "rocker_left", "front_wheel_left", "rear_wheel_left", "side_mirror_left", "roof"]
+  },
+  "exterior_side_right": {
+    "name": "Правий бік (пасажирський)",
+    "description": "профіль авто з правої (пасажирської) сторони — видно пасажирські двері",
+    "parts_visible": ["front_door_right", "rear_door_right", "fender_right", "rear_quarter_right", "rocker_right", "front_wheel_right", "rear_wheel_right", "side_mirror_right", "roof"]
+  },
+  "engine_bay": {
+    "name": "Підкапотний простір",
+    "description": "капот відкритий, видно двигун і моторний відсік зверху",
+    "parts_visible": ["engine", "radiator", "battery", "frame_rail_front_left", "frame_rail_front_right", "strut_tower_left", "strut_tower_right", "hood_underside"]
+  },
+  "trunk_open": {
+    "name": "Багажник відкритий",
+    "description": "видно нутрощі багажника",
+    "parts_visible": ["trunk_floor", "trunk_lid_underside", "rear_panel"]
+  },
+  "interior_dash": {
+    "name": "Торпедо/панель приладів",
+    "description": "вид зсередини на торпедо і кермо",
+    "parts_visible": ["dashboard", "steering_wheel", "airbag_steering", "airbag_passenger", "windshield_inside", "instrument_cluster"]
+  },
+  "interior_seats_front": {
+    "name": "Передні сидіння (інтер'єр)",
+    "description": "вид на передні сидіння і простір ніг зсередини",
+    "parts_visible": ["seat_driver", "seat_passenger", "airbag_curtain_left", "airbag_curtain_right", "interior_door_panel_left", "interior_door_panel_right"]
+  },
+  "interior_seats_rear": {
+    "name": "Задні сидіння (інтер'єр)",
+    "description": "вид на задні сидіння",
+    "parts_visible": ["seat_rear", "interior_rear_door_left", "interior_rear_door_right", "rear_window_inside"]
+  },
+  "wheel_close": {
+    "name": "Колесо зблизька",
+    "description": "крупний план одного колеса/диска",
+    "parts_visible": ["wheel"]
+  },
+  "damage_close": {
+    "name": "Пошкодження зблизька",
+    "description": "крупний план конкретного пошкодження (без широкого ракурсу)",
+    "parts_visible": []
+  },
+  "odometer": {
+    "name": "Одометр",
+    "description": "приладова панель з пробігом",
+    "parts_visible": ["instrument_cluster"]
+  },
+  "vin_plate": {
+    "name": "VIN-табличка",
+    "description": "крупний план VIN на кузові або на табличці",
+    "parts_visible": []
+  },
+  "undercarriage": {
+    "name": "Днище",
+    "description": "вид знизу або з підйомника",
+    "parts_visible": ["frame_rail_front_left", "frame_rail_front_right", "frame_rail_rear_left", "frame_rail_rear_right", "exhaust", "subframe_front", "subframe_rear"]
+  },
+  "other": {
+    "name": "Інше",
+    "description": "не входить у жодну з категорій вище (наприклад документи, лот-наклейка, фон без авто)",
+    "parts_visible": []
+  }
+}

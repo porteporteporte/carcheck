@@ -1,0 +1,204 @@
+{
+  "id": "_fallback__wagon__generic",
+  "schema_version": "1.0.0",
+  "make": "_fallback",
+  "model": "wagon",
+  "generation": "generic",
+  "year_from": 1990,
+  "year_to": 2100,
+  "category": "wagon",
+  "identification": {
+    "shape": "седан з подовженою задньою частиною і великим багажником",
+    "ground_clearance": "низький кліренс"
+  },
+  "zones": {
+    "front": {
+      "checkpoints": {
+        "hood_smooth_surface": {
+          "question": "Чи поверхня капоту рівна без видимих складок, підняття чи зміщення?",
+          "intact_signal": "yes — капот рівний",
+          "damaged_signal": "no — капот деформований (складки, підняття, зміщення лінії з крилами)",
+          "weight": "major"
+        },
+        "front_bumper_in_place": {
+          "question": "Чи передній бампер на місці і цілий?",
+          "intact_signal": "yes — бампер цілий, без тріщин",
+          "damaged_signal": "no — відсутній, тріснутий, зміщений, рваний",
+          "weight": "normal"
+        },
+        "headlights_both_intact": {
+          "question": "Чи обидві передні фари цілі (скло без тріщин, корпус не зміщений)?",
+          "intact_signal": "yes — обидві фари цілі",
+          "damaged_signal": "no — хоча б одна фара розбита, відсутня, тріснута",
+          "weight": "normal"
+        },
+        "grille_intact": {
+          "question": "Чи решітка радіатора на місці і ціла?",
+          "intact_signal": "yes — решітка ціла",
+          "damaged_signal": "no — решітка зруйнована, відсутня, зігнута",
+          "weight": "minor"
+        },
+        "front_fenders_smooth": {
+          "question": "Чи передні крила без складок і вмятин біля колісних арок?",
+          "intact_signal": "yes — крила гладкі",
+          "damaged_signal": "no — складки, вмятини, підняття",
+          "weight": "major"
+        },
+        "structural_frame_visible": {
+          "question": "Чи видно оголений каркас, гнуті лонжерони за бампером?",
+          "intact_signal": "no — структура не оголена",
+          "damaged_signal": "yes — видно гнутий метал, рваний каркас",
+          "weight": "major"
+        }
+      }
+    },
+    "rear": {
+      "checkpoints": {
+        "taillights_both_intact": {
+          "question": "Чи обидва задні ліхтарі цілі?",
+          "intact_signal": "yes — обидва цілі",
+          "damaged_signal": "no — хоча б один розбитий або відсутній",
+          "weight": "normal"
+        },
+        "rear_bumper_in_place": {
+          "question": "Чи задній бампер на місці і цілий?",
+          "intact_signal": "yes — цілий",
+          "damaged_signal": "no — розбитий, відсутній, зміщений",
+          "weight": "normal"
+        },
+        "tailgate_closes_flush": {
+          "question": "Чи кришка багажника закривається без перекосу?",
+          "intact_signal": "yes — зазори рівномірні",
+          "damaged_signal": "no — перекошена, зазори різні",
+          "weight": "major"
+        },
+        "rear_quarter_panels_smooth": {
+          "question": "Чи задні крила без складок і вмятин?",
+          "intact_signal": "yes — поверхня рівна",
+          "damaged_signal": "no — деформація",
+          "weight": "normal"
+        }
+      }
+    },
+    "side_left": {
+      "checkpoints": {
+        "doors_aligned": {
+          "question": "Чи зазори водійських дверей рівномірні?",
+          "intact_signal": "yes",
+          "damaged_signal": "no — двері перекошені",
+          "weight": "major"
+        },
+        "left_mirror_present": {
+          "question": "Чи ліве дзеркало на місці і ціле?",
+          "intact_signal": "yes",
+          "damaged_signal": "no — відсутнє, висить, розбите",
+          "weight": "minor"
+        },
+        "left_quarter_panels_smooth": {
+          "question": "Чи ліві крила без складок і вмятин?",
+          "intact_signal": "yes",
+          "damaged_signal": "no — деформація",
+          "weight": "normal"
+        }
+      }
+    },
+    "side_right": {
+      "checkpoints": {
+        "doors_aligned": {
+          "question": "Чи зазори пасажирських дверей рівномірні?",
+          "intact_signal": "yes",
+          "damaged_signal": "no — двері перекошені",
+          "weight": "major"
+        },
+        "right_mirror_present": {
+          "question": "Чи праве дзеркало на місці і ціле?",
+          "intact_signal": "yes",
+          "damaged_signal": "no — відсутнє, висить, розбите",
+          "weight": "minor"
+        },
+        "right_quarter_panels_smooth": {
+          "question": "Чи праві крила без складок і вмятин?",
+          "intact_signal": "yes",
+          "damaged_signal": "no — деформація",
+          "weight": "normal"
+        }
+      }
+    },
+    "roof": {
+      "checkpoints": {
+        "roof_panel_flat": {
+          "question": "Чи дах рівний без вмятин і складок?",
+          "intact_signal": "yes",
+          "damaged_signal": "no — прогнутий, складка від перекидання",
+          "weight": "major"
+        },
+        "windshield_intact": {
+          "question": "Чи лобове скло ціле без тріщин?",
+          "intact_signal": "yes",
+          "damaged_signal": "no — тріщина, павутинка, відсутнє",
+          "weight": "normal"
+        },
+        "side_glass_intact": {
+          "question": "Чи бокові скла цілі?",
+          "intact_signal": "yes",
+          "damaged_signal": "no — побите або відсутнє хоча б одне",
+          "weight": "minor"
+        }
+      }
+    },
+    "interior": {
+      "checkpoints": {
+        "steering_wheel_visible_close": {
+          "question": "Чи є на фото план керма зблизька?",
+          "intact_signal": "yes",
+          "damaged_signal": "no — керма не видно або тільки здалека",
+          "weight": "minor"
+        },
+        "steering_airbag_intact": {
+          "question": "ВІДПОВІДАЙ ТІЛЬКИ якщо керма видно зблизька. Чи подушка водія НЕ розгорнута?",
+          "intact_signal": "yes — центр керма цілий",
+          "damaged_signal": "no — висить тканина, центр керма зруйнований",
+          "weight": "major"
+        },
+        "passenger_airbag_intact": {
+          "question": "ВІДПОВІДАЙ ТІЛЬКИ якщо торпедо видно зблизька. Чи подушка пасажира НЕ розгорнута?",
+          "intact_signal": "yes — торпедо ціле",
+          "damaged_signal": "no — розрив торпедо, висить тканина",
+          "weight": "major"
+        },
+        "dashboard_no_warnings": {
+          "question": "ВІДПОВІДАЙ ТІЛЬКИ якщо приладова панель увімкнена. Чи на панелі НЕМАЄ червоних/помаранчевих попереджень (airbag, ABS, ESP, malfunction)?",
+          "intact_signal": "yes — попереджень нема або панель вимкнена",
+          "damaged_signal": "no — горять warnings",
+          "weight": "major"
+        },
+        "seats_no_water_damage": {
+          "question": "Чи сидіння без слідів води (розводів, плісняви)?",
+          "intact_signal": "yes",
+          "damaged_signal": "no — водяні розводи, мокрі плями, плісня",
+          "weight": "major"
+        }
+      }
+    },
+    "mechanical": {
+      "checkpoints": {
+        "engine_bay_no_visible_damage": {
+          "question": "Чи моторний відсік без видимих пошкоджень компонентів?",
+          "intact_signal": "yes — компоненти цілі",
+          "damaged_signal": "no — пробитий радіатор, порвані шланги, тріснутий двигун",
+          "weight": "major"
+        },
+        "frame_rails_straight": {
+          "question": "Чи лонжерони прямі без видимих згинів?",
+          "intact_signal": "yes — або не видно",
+          "damaged_signal": "no — видно згин, зміщення",
+          "weight": "major"
+        }
+      }
+    }
+  },
+  "verified": true,
+  "source": "human",
+  "created_at": "2026-05-01T00:00:00Z",
+  "updated_at": "2026-05-01T00:00:00Z"
+}

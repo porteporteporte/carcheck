@@ -1,0 +1,11 @@
+import { VinLookup } from './components/VinLookup'
+
+function App() {
+  return (
+    <div style={{ background: '#1a1c20', minHeight: '100vh', padding: '0 20px' }}>
+      <VinLookup />
+    </div>
+  )
+}
+
+export default App

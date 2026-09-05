@@ -1,0 +1,75 @@
+{
+  "generated_at": "2026-05-01T12:00:54.673Z",
+  "schema_version": "1.0.0",
+  "total_profiles": 1,
+  "total_fallbacks": 9,
+  "total_makes": 1,
+  "profiles": [
+    {
+      "id": "bmw__x5__g05",
+      "make": "BMW",
+      "model": "X5",
+      "generation": "G05",
+      "year_from": 2019,
+      "year_to": 2023,
+      "category": "suv",
+      "schema_version": "1.0.0",
+      "verified": false,
+      "path": "bmw/x5/g05.json"
+    }
+  ],
+  "byModel": {
+    "bmw/x5": [
+      {
+        "generation": "G05",
+        "year_from": 2019,
+        "year_to": 2023,
+        "path": "bmw/x5/g05.json"
+      }
+    ]
+  },
+  "fallbacks": [
+    {
+      "category": "convertible",
+      "path": "_fallback/convertible.json"
+    },
+    {
+      "category": "coupe",
+      "path": "_fallback/coupe.json"
+    },
+    {
+      "category": "ev",
+      "path": "_fallback/ev.json"
+    },
+    {
+      "category": "hatchback",
+      "path": "_fallback/hatchback.json"
+    },
+    {
+      "category": "pickup",
+      "path": "_fallback/pickup.json"
+    },
+    {
+      "category": "sedan",
+      "path": "_fallback/sedan.json"
+    },
+    {
+      "category": "suv",
+      "path": "_fallback/suv.json"
+    },
+    {
+      "category": "van",
+      "path": "_fallback/van.json"
+    },
+    {
+      "category": "wagon",
+      "path": "_fallback/wagon.json"
+    }
+  ],
+  "makes": [
+    {
+      "make": "BMW",
+      "path": "bmw/_make.json"
+    }
+  ]
+}

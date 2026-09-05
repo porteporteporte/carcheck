@@ -1,0 +1,93 @@
+═══════════════════════════════════════════════════════════════════
+ПАТЧ ДЛЯ src/components/VinLookup.jsx
+═══════════════════════════════════════════════════════════════════
+
+Знайди функцію PhotoAnalysisBlock — там всередині є partLabel().
+
+ЗАМІНИ partLabel + render блока "Пошкоджені деталі":
+
+ШУКАЙ це:
+─────────────────────────────────────────────────────────
+  function partLabel(p) {
+    var s = p.partName
+    if (p.description) s += ' — ' + p.description
+    if (p.photoIndex != null) s += ' (фото ' + (p.photoIndex + 1) + ')'
+    return s
+  }
+─────────────────────────────────────────────────────────
+ЗАЛИШ ЯК Є — це для backward compat, не торкаєшся.
+
+ЗНАЙДИ блок "Пошкоджені деталі":
+─────────────────────────────────────────────────────────
+      {pa.damagedParts && pa.damagedParts.length > 0 && (
+        <div style={{ marginBottom: '12px' }}>
+          <div className="section-header section-red" style={{ marginBottom: '6px', borderBottom: 'none', padding: 0 }}>
+            Пошкоджені деталі ({pa.damagedParts.length})
+          </div>
+          {pa.damagedParts.map(function(p, i) {
+            return (
+              <div key={i} className="section-item">
+                <span className="item-dot dot-red"></span>
+                <span className="item-text">{partLabel(p)}</span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+─────────────────────────────────────────────────────────
+
+ЗАМІНИ НА:
+─────────────────────────────────────────────────────────
+      {pa.damagedParts && pa.damagedParts.length > 0 && (
+        <div style={{ marginBottom: '12px' }}>
+          <div className="section-header section-red" style={{ marginBottom: '6px', borderBottom: 'none', padding: 0 }}>
+            Пошкоджені деталі ({pa.damagedParts.length})
+          </div>
+          {pa.damagedParts.map(function(p, i) {
+            var items = p.descriptionItems && p.descriptionItems.length > 0 ? p.descriptionItems : null
+            return (
+              <div key={i} style={{ marginBottom: '12px' }}>
+                <div className="section-item" style={{ fontWeight: 600 }}>
+                  <span className="item-dot dot-red"></span>
+                  <span className="item-text" style={{ color: 'var(--text)' }}>
+                    {p.partName}
+                    {p.checkpointResults && (
+                      <span style={{ color: 'var(--dim)', fontSize: '11px', fontFamily: 'var(--mono)', marginLeft: '8px' }}>
+                        ({p.checkpointResults.damaged} з {p.checkpointResults.total})
+                      </span>
+                    )}
+                  </span>
+                </div>
+                {items ? items.map(function(it, j) {
+                  return (
+                    <div key={j} style={{
+                      paddingLeft: '32px', paddingTop: '4px', paddingBottom: '4px',
+                      fontSize: '12px', lineHeight: 1.5, color: 'var(--muted)',
+                      borderLeft: '1px solid rgba(255,255,255,0.06)',
+                      marginLeft: '5px',
+                    }}>
+                      <span style={{ color: 'var(--accent)', marginRight: '6px' }}>•</span>
+                      {it.text}
+                    </div>
+                  )
+                }) : (
+                  <div style={{ paddingLeft: '32px', fontSize: '12px', color: 'var(--muted)' }}>
+                    {p.description}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
+─────────────────────────────────────────────────────────
+
+Це все. Решту VinLookup.jsx не торкай.
+
+После заміни кожна "Пошкоджена деталь" виглядатиме як:
+
+  ● Передня частина (5 з 14)
+   │ • Видно на фото 0, 4: бампер на місці але пробитий зліва
+   │ • Видно на фото 4: ліва фара повністю відсутня
+   │ • Видно на фото 1: капот має складку біля фари
+   │ • Видно на фото 2: лонжерон зліва зміщений

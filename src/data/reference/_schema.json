@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://trustauto.app/schema/reference-profile-1.0.0.json",
+  "title": "Reference Profile",
+  "description": "Структурований опис покоління авто для photo damage analysis.",
+  "version": "1.0.0",
+
+  "type": "object",
+  "required": [
+    "id", "schema_version", "make", "model", "generation",
+    "year_from", "year_to", "category",
+    "identification", "zones",
+    "created_at", "updated_at"
+  ],
+  "additionalProperties": false,
+
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*__[a-z0-9]+(-[a-z0-9]+)*__[a-z0-9]+$",
+      "description": "Стабільний унікальний ID. Формат: make__model__generation. Наприклад: 'bmw__x5__g05'. У БД стане PRIMARY KEY."
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver. Major bump = breaking change. Старий код може відмовитись читати інший major."
+    },
+    "make": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Display name бренду. Кейс — як на капоті авто. У БД стане колонкою з індексом."
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Display name моделі."
+    },
+    "generation": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Кодова назва покоління (G05, F30, XV70). Один рядок без пробілів."
+    },
+    "year_from": {
+      "type": "integer",
+      "minimum": 1900,
+      "maximum": 2100,
+      "description": "Перший рік випуску цього покоління."
+    },
+    "year_to": {
+      "type": "integer",
+      "minimum": 1900,
+      "maximum": 2100,
+      "description": "Останній рік. Для покоління що ще випускається — поточний рік."
+    },
+    "category": {
+      "type": "string",
+      "enum": ["sedan", "suv", "coupe", "hatchback", "wagon", "pickup", "van", "ev", "convertible"],
+      "description": "Категорія для fallback-логіки. Обмежений enum щоб не плодити різнобій."
+    },
+
+    "identification": {
+      "type": "object",
+      "description": "Загальні візуальні маркери — допомагають AI впевнитись що це справді ця модель.",
+      "additionalProperties": { "type": "string" }
+    },
+
+    "zones": {
+      "type": "object",
+      "description": "Per-zone checkpoints. Ключі — id зон з photoAnalysis.js (front/rear/side_left/side_right/roof/interior/mechanical).",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["checkpoints"],
+        "properties": {
+          "checkpoints": {
+            "type": "object",
+            "description": "Карта checkpoint_id -> об'єкт з питанням і ознаками. Ключі — нові додаються без впливу на існуючі.",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["question", "intact_signal", "damaged_signal"],
+              "properties": {
+                "question": { "type": "string", "description": "Питання що отримує AI українською." },
+                "intact_signal": { "type": "string", "description": "Що означає 'yes' відповідь — еталон." },
+                "damaged_signal": { "type": "string", "description": "Що означає 'no' відповідь — пошкодження або відсутність." },
+                "weight": {
+                  "type": "string",
+                  "enum": ["minor", "normal", "major"],
+                  "default": "normal",
+                  "description": "Вага дефекту при підрахунку severity. major — структурні (лонжерони, дах). minor — косметика."
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+
+    "common_issues": {
+      "type": "object",
+      "description": "Типові болячки моделі. Інформативно — використовується в Main AI prompt.",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+
+    "verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Чи переглядав людина. AI-generated профілі = false, після ручної перевірки = true."
+    },
+    "source": {
+      "type": "string",
+      "description": "Звідки взявся профіль. 'ai_generated', 'human', 'scraped', 'merged'..."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
