@@ -16,8 +16,10 @@ html, body { overflow-x: hidden; }
   --text: #ecedf2;       /* +brighter for main copy */
   --muted: #9095a0;      /* +brighter for labels & body text */
   --dim: #5a5e66;        /* +brighter for secondary chrome */
-  --accent: #d97b3a;
-  --accent-hover: #e58d4f;
+  --accent: #4a9edb;
+  --accent-hover: #64b0e6;
+  --amber: #d97b3a;
+  --amber-hover: #e58d4f;
   --error: #bf4f4f;
   --mono: 'JetBrains Mono', 'Courier New', monospace;
   --sans: 'DM Sans', system-ui, sans-serif;
@@ -54,7 +56,7 @@ body::after {
   left: -200px;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(217, 123, 58, 0.08) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(74, 158, 219, 0.08) 0%, transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
@@ -390,7 +392,7 @@ body::after {
 .step-item.active {
   border-color: var(--accent);
   color: var(--text);
-  background: rgba(217, 123, 58, 0.08);
+  background: rgba(74, 158, 219, 0.08);
 }
 
 .step-item.done {
@@ -511,7 +513,7 @@ body::after {
 }
 
 .score-green { background: rgba(74, 158, 107, 0.1); color: #6eb88c; }
-.score-amber { background: rgba(217, 123, 58, 0.1); color: var(--accent-hover); }
+.score-amber { background: rgba(217, 123, 58, 0.1); color: var(--amber-hover); }
 .score-red { background: rgba(191, 79, 79, 0.1); color: #d36e6e; }
 
 .report-verdict {
@@ -601,7 +603,7 @@ body::after {
 .dot-red { background: #d36e6e; }
 .dot-green { background: #6eb88c; }
 .dot-blue { background: #6e93cf; }
-.dot-amber { background: var(--accent); }
+.dot-amber { background: var(--amber); }
 
 .item-num {
   font-family: var(--mono);
@@ -647,7 +649,7 @@ body::after {
 
 .tag-green { background: rgba(74, 158, 107, 0.15); color: #6eb88c; }
 .tag-red { background: rgba(191, 79, 79, 0.15); color: #d36e6e; }
-.tag-amber { background: rgba(217, 123, 58, 0.15); color: var(--accent-hover); }
+.tag-amber { background: rgba(217, 123, 58, 0.15); color: var(--amber-hover); }
 .tag-neutral { background: var(--surface2); color: var(--muted); }
 
 /* ═══ USA AUCTION ═══ */
@@ -915,7 +917,7 @@ body::after {
   }
 
   .step-item.active {
-    background: rgba(217, 123, 58, 0.14);
+    background: rgba(74, 158, 219, 0.14);
     border-color: var(--accent);
   }
 
@@ -986,7 +988,7 @@ body::after {
 }
 
 .score-cat-pts.tier-good { color: #6eb88c; }
-.score-cat-pts.tier-mid  { color: var(--accent-hover); }
+.score-cat-pts.tier-mid  { color: var(--amber-hover); }
 .score-cat-pts.tier-bad  { color: #d36e6e; }
 
 /* Progress bar */
@@ -1005,7 +1007,7 @@ body::after {
 }
 
 .score-cat-fill.tier-good { background: #6eb88c; }
-.score-cat-fill.tier-mid  { background: var(--accent); }
+.score-cat-fill.tier-mid  { background: var(--amber); }
 .score-cat-fill.tier-bad  { background: #d36e6e; }
 
 /* Notes (ось чому такий бал) */

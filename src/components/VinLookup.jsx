@@ -832,8 +832,8 @@ function PhotoAnalysisBlock({ pa }) {
       )}
 
       {pa.additionalObservations && pa.additionalObservations.length > 0 && (
-        <div style={{ marginTop: '12px', padding: '10px 12px', background: 'rgba(217,123,58,0.06)', borderLeft: '2px solid var(--accent)', borderRadius: '4px' }}>
-          <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--accent)', marginBottom: '6px', letterSpacing: '0.05em' }}>ДОДАТКОВІ СПОСТЕРЕЖЕННЯ</div>
+        <div style={{ marginTop: '12px', padding: '10px 12px', background: 'rgba(217,123,58,0.06)', borderLeft: '2px solid var(--amber)', borderRadius: '4px' }}>
+          <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--amber)', marginBottom: '6px', letterSpacing: '0.05em' }}>ДОДАТКОВІ СПОСТЕРЕЖЕННЯ</div>
           {pa.additionalObservations.map(function(obs, i) {
             return (
               <div key={i} className="section-item" style={{ paddingLeft: 0 }}>
