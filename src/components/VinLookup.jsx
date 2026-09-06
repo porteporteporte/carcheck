@@ -62,7 +62,7 @@ function safeFetch(url, opts) {
 }
 
 /* ═══ FACT EXTRACTOR ═══ */
-function extractFacts(autoria, nhtsa, vinDecode, auction) {
+function extractFacts(autoria, nhtsa, vinDecode, auction, avgPrice) {
   var facts = []
   var year = autoria?.autoData?.year || parseInt(nhtsa?.ModelYear) || null
   var currentYear = new Date().getFullYear()
@@ -128,6 +128,7 @@ function extractFacts(autoria, nhtsa, vinDecode, auction) {
   if (dealerId > 0) {
     var dealerTxt = 'Продавець: автосалон'
     if (autoria.dealer.name) dealerTxt += ' "' + autoria.dealer.name + '"'
+    if (autoria.dealer.link) dealerTxt += ' — всі оголошення: auto.ria.com' + autoria.dealer.link
     facts.push({ kind: 'info', icon: '·', text: dealerTxt })
   } else if (autoria) {
     facts.push({ kind: 'info', icon: '·', text: 'Продавець: приватна особа' })
@@ -148,6 +149,24 @@ function extractFacts(autoria, nhtsa, vinDecode, auction) {
   }
 
   if (autoRiaPrice) facts.push({ kind: 'info', icon: '·', text: 'Ціна AutoRia: $' + autoRiaPrice.toLocaleString() })
+
+  if (avgPrice?.arithmeticMean && autoRiaPrice) {
+    var avgP = Math.round(avgPrice.interQuartileMean || avgPrice.arithmeticMean)
+    var avgSample = avgPrice.total || avgPrice.classifieds?.length
+    var diffPct = Math.round(((autoRiaPrice - avgP) / avgP) * 100)
+    facts.push({
+      kind: 'info', icon: '·',
+      text: 'Середня ціна на AutoRia для цієї моделі/пробігу: $' + avgP.toLocaleString() +
+        (avgSample ? ' (на основі ' + avgSample + ' оголошень)' : ''),
+    })
+    if (diffPct > 20) {
+      facts.push({ kind: 'warn', icon: '⚠', text: 'Ціна на ' + diffPct + '% вища за ринкову середню' })
+    } else if (diffPct < -20) {
+      facts.push({ kind: 'warn', icon: '⚠', text: 'Ціна на ' + Math.abs(diffPct) + '% нижча за ринкову середню — перевір причину' })
+    } else {
+      facts.push({ kind: 'good', icon: '✓', text: 'Ціна відповідає ринковій середній (±20%)' })
+    }
+  }
 
   if (msrp && autoRiaPrice && year) {
     var depreciation = Math.round((1 - autoRiaPrice / msrp) * 100)
@@ -373,6 +392,7 @@ export function VinLookup() {
   const [vinDecode, setVinDecode] = useState(null)
   const [advancedDecode, setAdvancedDecode] = useState(null)
   const [auction, setAuction] = useState(null)
+  const [avgPrice, setAvgPrice] = useState(null)
   const [aiReport, setAiReport] = useState(null)
   const [photoAnalysis, setPhotoAnalysis] = useState(null)
 
@@ -384,7 +404,7 @@ export function VinLookup() {
     setStepIdx(0)
     setError(null)
     setAutoria(null); setNhtsa(null); setVinDecode(null); setAdvancedDecode(null)
-    setAuction(null); setAiReport(null); setPhotoAnalysis(null)
+    setAuction(null); setAvgPrice(null); setAiReport(null); setPhotoAnalysis(null)
 
     var input = query.trim()
     var isLink = input.startsWith('http') || input.includes('auto.ria.com')
@@ -438,11 +458,19 @@ export function VinLookup() {
     var vinDecodeData = null
     var auctionData = null
     var advancedDecodeData = null
+    var avgPriceData = null
+
+    var raceInt = autoRiaData?.autoData?.raceInt
+    var avgPriceUrl = (autoRiaData?.markId && autoRiaData?.modelId)
+      ? WORKER + '/average-price?marka_id=' + autoRiaData.markId + '&model_id=' + autoRiaData.modelId +
+        (raceInt != null ? '&race_from=' + Math.max(0, raceInt - 30) + '&race_to=' + (raceInt + 30) : '')
+      : null
 
     var results = await Promise.all([
       safeFetch(WORKER + '/vin-decode?vin=' + vin),
       safeFetch(WORKER + '/auction?vin=' + vin),
       runAdvancedDecode(WORKER, vin),
+      avgPriceUrl ? safeFetch(avgPriceUrl) : Promise.resolve(null),
     ])
     if (results[0]?.status === 'success') { vinDecodeData = results[0].data; setVinDecode(vinDecodeData) }
     if (results[1]?.status === 'success' && results[1].data?.length > 0) {
@@ -450,6 +478,7 @@ export function VinLookup() {
       setAuction(auctionData)
     }
     if (results[2]) { advancedDecodeData = results[2]; setAdvancedDecode(advancedDecodeData) }
+    if (results[3]?.arithmeticMean) { avgPriceData = results[3]; setAvgPrice(avgPriceData) }
 
     if (!autoRiaData && !nhtsaData && !vinDecodeData && !advancedDecodeData) {
       setError('VIN не розпізнано в жодній з баз даних. Перевір правильність VIN.')
@@ -460,7 +489,7 @@ export function VinLookup() {
     setStepIdx(2)
 
     /* Step 3 — AI */
-    var mainPromise = runMainAI(autoRiaData, nhtsaData, vinDecodeData, auctionData, advancedDecodeData)
+    var mainPromise = runMainAI(autoRiaData, nhtsaData, vinDecodeData, auctionData, advancedDecodeData, avgPriceData)
       .then(setAiReport).catch(function(e) { console.error('Main AI:', e) })
 
     var photoPromise = auctionData?.images?.length > 0
@@ -510,6 +539,7 @@ export function VinLookup() {
           vinDecode={vinDecode}
           advancedDecode={advancedDecode}
           auction={auction}
+          avgPrice={avgPrice}
           aiReport={aiReport}
           photoAnalysis={photoAnalysis}
         />
@@ -519,8 +549,8 @@ export function VinLookup() {
 }
 
 /* ═══ Main AI — calls Worker /ai-claude proxy ═══ */
-async function runMainAI(autoria, nhtsa, vinDecode, auction, advanced) {
-  var facts = extractFacts(autoria, nhtsa, vinDecode, auction)
+async function runMainAI(autoria, nhtsa, vinDecode, auction, advanced, avgPrice) {
+  var facts = extractFacts(autoria, nhtsa, vinDecode, auction, avgPrice)
   var advFacts = extractFactsFromAdvanced(advanced, autoria)
   var allFacts = facts.concat(advFacts)
   var factsTxt = allFacts.map(function(f) { return f.icon + ' ' + f.text }).join('\n')
@@ -848,11 +878,11 @@ function PhotoAnalysisBlock({ pa }) {
 }
 
 /* ═══ Full Report ═══ */
-function FullReport({ autoria, nhtsa, vinDecode, advancedDecode, auction, aiReport, photoAnalysis }) {
+function FullReport({ autoria, nhtsa, vinDecode, advancedDecode, auction, avgPrice, aiReport, photoAnalysis }) {
   const [lightboxIdx, setLightboxIdx] = useState(null)
 
   var photo = autoria ? (autoria.photoData?.seoLinkF || autoria.photoData?.seoLinkM || null) : null
-  var facts = extractFacts(autoria, nhtsa, vinDecode, auction)
+  var facts = extractFacts(autoria, nhtsa, vinDecode, auction, avgPrice)
   var advFacts = extractFactsFromAdvanced(advancedDecode, autoria)
   var allFacts = facts.concat(advFacts)
   var a = aiReport
@@ -876,6 +906,7 @@ function FullReport({ autoria, nhtsa, vinDecode, advancedDecode, auction, aiRepo
       ['Пробіг', autoria.autoData?.raceInt ? autoria.autoData.raceInt.toLocaleString() + ' км' : '—'],
       ['Паливо', autoria.autoData?.fuelName],
       ["Об'єм", autoria.autoData?.engineVolume ? autoria.autoData.engineVolume + ' л' : '—'],
+      ['Колір', autoria.color?.name || '—'],
       ['Ціна', autoria.USD ? '$' + autoria.USD.toLocaleString() : '—'],
       ['Регіон', autoria.stateData?.name],
     ]

@@ -16,8 +16,8 @@ import { buildZoneGroupPrompt } from './prompts'
 var MODEL = 'claude-sonnet-4-5'
 
 export var GROUP_ZONES = {
-  exterior:   ['front', 'rear', 'side_left', 'side_right', 'roof'],
-  interior:   ['interior'],
+  exterior: ['front', 'rear', 'side_left', 'side_right', 'roof'],
+  interior: ['interior'],
   mechanical: ['mechanical'],
 }
 
@@ -42,7 +42,7 @@ export async function analyzeZoneGroup(opts) {
   var subsetUrls = []
   var photoRolesForPrompt = []
   var indexMapping = []  /* indexMapping[batchIdx] = originalIdx */
-  photoSelection.forEach(function(sel, batchIdx) {
+  photoSelection.forEach(function (sel, batchIdx) {
     subsetUrls.push(photos[sel.original_index])
     photoRolesForPrompt.push({ index_in_batch: batchIdx, role: sel.role })
     indexMapping.push(sel.original_index)
@@ -60,7 +60,7 @@ export async function analyzeZoneGroup(opts) {
     checkpoints: checkpoints,
   })
 
-  var content = subsetUrls.map(function(url) {
+  var content = subsetUrls.map(function (url) {
     return { type: 'image', source: { type: 'url', url: url } }
   })
   content.push({ type: 'text', text: prompt })
@@ -70,9 +70,9 @@ export async function analyzeZoneGroup(opts) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        
-        
-        
+
+
+
       },
       body: JSON.stringify({
         model: MODEL,
@@ -96,7 +96,7 @@ export async function analyzeZoneGroup(opts) {
     /* Ремапаємо batch indices → original indices ДВІЧІ:
        1. evidence_photo (число)
        2. номери у тексті note ("Видно на фото X, Y: ...")  */
-    var remapped = parsed.checkpoints.map(function(c) {
+    var remapped = parsed.checkpoints.map(function (c) {
       var ev = c.evidence_photo
       var origEv = (typeof ev === 'number' && ev >= 0 && ev < indexMapping.length)
         ? indexMapping[ev]
@@ -132,12 +132,12 @@ export async function analyzeZoneGroup(opts) {
    Користувач бачить номер фото = position в gallery + 1 (бо UI показує 1-based). */
 function remapNotePhotoNumbers(note, indexMapping) {
   /* Знаходимо паттерн "фото X" або "фото X, Y, Z" (через кому/пробіли/'та'/'і') */
-  return note.replace(/фото\s*([\d,\s]+(?:та\s*\d+)?(?:\s*і\s*\d+)?)/gi, function(match, numsStr) {
+  return note.replace(/фото\s*([\d,\s]+(?:та\s*\d+)?(?:\s*і\s*\d+)?)/gi, function (match, numsStr) {
     /* Витягуємо всі числа з підрядка */
     var nums = numsStr.match(/\d+/g)
     if (!nums) return match
     /* Мапаємо кожне через indexMapping */
-    var mapped = nums.map(function(n) {
+    var mapped = nums.map(function (n) {
       var batchIdx = parseInt(n)
       if (batchIdx >= 0 && batchIdx < indexMapping.length) {
         return indexMapping[batchIdx]
@@ -150,7 +150,7 @@ function remapNotePhotoNumbers(note, indexMapping) {
 
 function makeAllUnclearResponse(checkpoints) {
   var result = []
-  checkpoints.flat.forEach(function(cp) {
+  checkpoints.flat.forEach(function (cp) {
     result.push({
       zone_id: cp.zone_id,
       checkpoint_id: cp.checkpoint_id,
