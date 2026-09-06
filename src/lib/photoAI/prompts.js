@@ -63,56 +63,26 @@ export function buildClassifyPrompt(photoCount) {
   return p
 }
 
-export function buildZoneGroupPrompt(opts) {
-  var groupName = opts.groupName
-  var photoCount = opts.photoCount
-  var photoRoles = opts.photoRoles
-  var reference = opts.reference
-  var declared = opts.declared
-  var secondary = opts.secondary
-  var titleClass = opts.titleClass
-  var titleType = opts.titleType
-  var checkpoints = opts.checkpoints
+/* ═══════════════════════════════════════════════════════════════════
+   buildZoneGroupPrompt v4 — split for prompt caching.
 
+   Раніше це був один суцільний рядок. Тепер розбито на 3 частини за
+   частотою повторення, щоб винести стабільні блоки в `system` з
+   cache_control і не переплачувати за токени що не змінюються:
+
+   1. STATIC  — однакове для ВСІХ машин, ВСІХ зон, ВСІХ перевірок.
+                Іде в system[0], кешується практично завжди тепле.
+   2. CAR     — однакове для цієї (модель + покоління + зона), різне
+                між зонами і машинами. Іде в system[1], кешується між
+                різними оголошеннями того самого покоління.
+   3. DYNAMIC — унікальне для цього конкретного оголошення (ролі фото,
+                задекларовані пошкодження). НЕ кешується — і не повинно.
+   ═══════════════════════════════════════════════════════════════════ */
+
+export function buildZoneGroupStaticRules() {
   var p = ''
 
-  p += 'Ти оцінюєш ' + reference.make + ' ' + reference.model
-  if (reference.generation && reference.generation !== 'unknown') {
-    p += ' (' + reference.generation + ', ' + reference.year_from + '-' + reference.year_to + ')'
-  }
-  p += '.\n\n'
-
-  p += 'Тобі дано ' + photoCount + ' фото — ВСІ вони відносяться до зони "' + groupName + '".\n'
-  p += 'Ти бачиш ці фото РАЗОМ — порівнюй між ними і cross-reference.\n\n'
-
-  p += 'РОЛІ ФОТО (як я класифікував):\n'
-  photoRoles.forEach(function(pr) {
-    p += '- Фото ' + pr.index_in_batch + ': ' + pr.role + '\n'
-  })
-
-  p += '\nЗАДЕКЛАРОВАНО АУКЦІОНОМ:\n'
-  p += '- Primary: ' + declared + '\n'
-  if (secondary && secondary !== 'N/A' && secondary !== '-') {
-    p += '- Secondary: ' + secondary + '\n'
-  }
-  if (titleType) p += '- Title Type: ' + titleType + '\n'
-
-  if (titleClass === 'flood') {
-    p += '\n!!! TITLE = FLOOD. Авто було у воді — шукай сліди води навіть якщо primary не водяний.\n'
-  } else if (titleClass === 'salvage') {
-    p += '\nTitle = SALVAGE — авто списане страховою.\n'
-  } else if (titleClass === 'rebuilt') {
-    p += '\nTitle = REBUILT — авто пройшло відновлення.\n'
-  }
-
-  if (reference.identification && Object.keys(reference.identification).length > 0) {
-    p += '\nЯК МАЄ ВИГЛЯДАТИ ЦІЛЕ АВТО ЦІЄЇ МОДЕЛІ:\n'
-    Object.keys(reference.identification).forEach(function(k) {
-      p += '- ' + reference.identification[k] + '\n'
-    })
-  }
-
-  p += '\n═══ КРИТИЧНО ВАЖЛИВО ПРО СТОРОНИ — ЧИТАЙ УВАЖНО ═══\n'
+  p += '═══ КРИТИЧНО ВАЖЛИВО ПРО СТОРОНИ — ЧИТАЙ УВАЖНО ═══\n'
   p += 'Ти ЛЕГКО плутаєш "ліву" і "праву" сторону авто. Тому ми робимо так:\n\n'
   p += 'У відповідях ОПИСУЙ ПОЛОЖЕННЯ ВИКЛЮЧНО ВІДНОСНО ФОТО:\n'
   p += '  ✓ "зліва на фото" або "у лівій частині фото"\n'
@@ -124,10 +94,6 @@ export function buildZoneGroupPrompt(opts) {
   p += '  ✗ "лівий бік авто" / "правий бік авто"\n'
   p += '  ✗ "ліва фара" / "права фара" (просто "фара зліва на фото" або "фара справа на фото")\n\n'
   p += 'Чому: камера дзеркалить, ти плутаєшся. JS система отримає твою відповідь і САМА перекладе позицію на фото на сторону авто, бо вона знає роль фото (front/rear/side). Не намагайся це зробити сам.\n\n'
-
-  p += '═══ ЗАВДАННЯ ═══\n'
-  p += 'Я задам ' + checkpoints.flat.length + ' конкретних питань.\n'
-  p += 'Для КОЖНОГО питання обери yes / no / unclear за ЧІТКИМИ ПРАВИЛАМИ нижче.\n\n'
 
   p += '═══ ПРАВИЛА ВІДПОВІДЕЙ — ЦЕ НАЙВАЖЛИВІШЕ ═══\n\n'
 
@@ -160,7 +126,7 @@ export function buildZoneGroupPrompt(opts) {
   p += 'Тільки коли видно конкретний світний текст або символ warning — тоді "no".\n\n'
 
   p += '═══ НОМЕРИ ФОТО — НАДВАЖЛИВО ═══\n'
-  p += 'Я дав тобі ' + photoCount + ' фото з номерами 0 до ' + (photoCount-1) + ' (це індекси в МОЄМУ батчі).\n'
+  p += 'Фото пронумеровані послідовно з 0, без пропусків (0, 1, 2, ...) — це індекси в межах батчу, який тобі показують.\n'
   p += 'У evidence_photo і в полі "note" ВКАЗУЙ ТОЧНІ номери цих фото.\n'
   p += 'Якщо ознака на одному фото — один номер. Якщо на кількох — переліч ВСІ через кому.\n'
   p += 'НЕ пиши завжди "0" — використовуй РІЗНІ номери залежно від того яке фото показує ознаку.\n\n'
@@ -181,6 +147,45 @@ export function buildZoneGroupPrompt(opts) {
   p += '2. Тіні і відблиски — НЕ пошкодження.\n'
   p += '3. Бруд і налипання — НЕ пошкодження.\n\n'
 
+  p += '═══ ВИВІД (ТІЛЬКИ JSON) ═══\n'
+  p += '{\n'
+  p += '  "checkpoints": [\n'
+  p += '    {\n'
+  p += '      "zone_id": "...",\n'
+  p += '      "checkpoint_id": "...",\n'
+  p += '      "answer": "yes" | "no" | "unclear",\n'
+  p += '      "evidence_photo": число — індекс фото в батчі (0-based), або null,\n'
+  p += '      "note": "Видно на фото X: <позиція ВІДНОСНО ФОТО + опис>"\n'
+  p += '    }\n'
+  p += '  ],\n'
+  p += '  "matches_declared": true | false,\n'
+  p += '  "additional_observations": ["спостереження поза checkpoints"]\n'
+  p += '}\n'
+
+  return p
+}
+
+export function buildZoneGroupCarContext(reference, checkpoints) {
+  var p = ''
+
+  p += 'Ти оцінюєш ' + reference.make + ' ' + reference.model
+  if (reference.generation && reference.generation !== 'unknown') {
+    p += ' (' + reference.generation + ', ' + reference.year_from + '-' + reference.year_to + ')'
+  }
+  p += '.\n\n'
+
+  if (reference.identification && Object.keys(reference.identification).length > 0) {
+    p += 'ЯК МАЄ ВИГЛЯДАТИ ЦІЛЕ АВТО ЦІЄЇ МОДЕЛІ:\n'
+    Object.keys(reference.identification).forEach(function(k) {
+      p += '- ' + reference.identification[k] + '\n'
+    })
+    p += '\n'
+  }
+
+  p += '═══ ЗАВДАННЯ ═══\n'
+  p += 'Я задам ' + checkpoints.flat.length + ' конкретних питань.\n'
+  p += 'Для КОЖНОГО питання обери yes / no / unclear за ЧІТКИМИ ПРАВИЛАМИ з інструкцій вище.\n\n'
+
   p += '═══ ПИТАННЯ ═══\n\n'
 
   Object.keys(checkpoints.byZone).forEach(function(zid) {
@@ -194,20 +199,42 @@ export function buildZoneGroupPrompt(opts) {
     p += '\n'
   })
 
-  p += '═══ ВИВІД (ТІЛЬКИ JSON) ═══\n'
-  p += '{\n'
-  p += '  "checkpoints": [\n'
-  p += '    {\n'
-  p += '      "zone_id": "...",\n'
-  p += '      "checkpoint_id": "...",\n'
-  p += '      "answer": "yes" | "no" | "unclear",\n'
-  p += '      "evidence_photo": число 0-' + (photoCount-1) + ' або null,\n'
-  p += '      "note": "Видно на фото X: <позиція ВІДНОСНО ФОТО + опис>"\n'
-  p += '    }\n'
-  p += '  ],\n'
-  p += '  "matches_declared": true | false,\n'
-  p += '  "additional_observations": ["спостереження поза checkpoints"]\n'
-  p += '}\n'
+  return p
+}
+
+export function buildZoneGroupDynamicContext(opts) {
+  var groupName = opts.groupName
+  var photoCount = opts.photoCount
+  var photoRoles = opts.photoRoles
+  var declared = opts.declared
+  var secondary = opts.secondary
+  var titleClass = opts.titleClass
+  var titleType = opts.titleType
+
+  var p = ''
+
+  p += 'Тобі дано ' + photoCount + ' фото — ВСІ вони відносяться до зони "' + groupName + '".\n'
+  p += 'Ти бачиш ці фото РАЗОМ — порівнюй між ними і cross-reference.\n\n'
+
+  p += 'РОЛІ ФОТО (як я класифікував):\n'
+  photoRoles.forEach(function(pr) {
+    p += '- Фото ' + pr.index_in_batch + ': ' + pr.role + '\n'
+  })
+
+  p += '\nЗАДЕКЛАРОВАНО АУКЦІОНОМ:\n'
+  p += '- Primary: ' + declared + '\n'
+  if (secondary && secondary !== 'N/A' && secondary !== '-') {
+    p += '- Secondary: ' + secondary + '\n'
+  }
+  if (titleType) p += '- Title Type: ' + titleType + '\n'
+
+  if (titleClass === 'flood') {
+    p += '\n!!! TITLE = FLOOD. Авто було у воді — шукай сліди води навіть якщо primary не водяний.\n'
+  } else if (titleClass === 'salvage') {
+    p += '\nTitle = SALVAGE — авто списане страховою.\n'
+  } else if (titleClass === 'rebuilt') {
+    p += '\nTitle = REBUILT — авто пройшло відновлення.\n'
+  }
 
   return p
 }

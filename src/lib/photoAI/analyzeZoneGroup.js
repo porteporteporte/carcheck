@@ -10,7 +10,7 @@
    а ЩЕ Й номери в тексті note (бо JS потім парсить "Видно на фото X").
    ═══════════════════════════════════════════════════════════════════ */
 
-import { buildZoneGroupPrompt } from './prompts'
+import { buildZoneGroupStaticRules, buildZoneGroupCarContext, buildZoneGroupDynamicContext } from './prompts'
 
 
 var MODEL = 'claude-sonnet-4-5'
@@ -48,22 +48,29 @@ export async function analyzeZoneGroup(opts) {
     indexMapping.push(sel.original_index)
   })
 
-  var prompt = buildZoneGroupPrompt({
+  /* Статичні правила (однакові для ВСІХ машин/зон/перевірок) і
+     контекст машини+зони (однаковий для цього покоління+зони, різний
+     між оголошеннями) ідуть в system[] з cache_control — вони не
+     змінюються між викликами і кешуються на боці Anthropic.
+     Динамічний контекст (ролі фото, задекларовані пошкодження) —
+     унікальний для цього оголошення, без кешування. */
+  var staticRules = buildZoneGroupStaticRules()
+  var carContext = buildZoneGroupCarContext(reference, checkpoints)
+  var dynamicContext = buildZoneGroupDynamicContext({
     groupName: groupName,
     photoCount: subsetUrls.length,
     photoRoles: photoRolesForPrompt,
-    reference: reference,
     declared: declared,
     secondary: secondary,
     titleClass: titleClass,
     titleType: titleType,
-    checkpoints: checkpoints,
   })
 
-  var content = subsetUrls.map(function (url) {
-    return { type: 'image', source: { type: 'url', url: url } }
-  })
-  content.push({ type: 'text', text: prompt })
+  var content = [{ type: 'text', text: dynamicContext }].concat(
+    subsetUrls.map(function (url) {
+      return { type: 'image', source: { type: 'url', url: url } }
+    })
+  )
 
   try {
     var res = await fetch('https://wandering-breeze-9e18.trustauto-api.workers.dev/ai-claude', {
@@ -78,6 +85,10 @@ export async function analyzeZoneGroup(opts) {
         model: MODEL,
         max_tokens: 4000,
         temperature: 0,
+        system: [
+          { type: 'text', text: staticRules, cache_control: { type: 'ephemeral' } },
+          { type: 'text', text: carContext, cache_control: { type: 'ephemeral' } },
+        ],
         messages: [{ role: 'user', content: content }],
       }),
     })
